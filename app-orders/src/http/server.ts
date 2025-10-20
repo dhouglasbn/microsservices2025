@@ -7,11 +7,16 @@ import {
   type ZodTypeProvider
 } from 'fastify-type-provider-zod'
 import { channels } from '../broker/channels/index.ts'
+import { db } from '../db/client.ts'
+import { schema } from '../db/schema/index.ts'
+import { randomUUID } from 'node:crypto'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
+
+app.register(fastifyCors, { origin: '*'})
 
 /** Escalonamento horizontal 
  * 
@@ -39,11 +44,13 @@ app.post('/orders', {
 
   console.log(' Creating an order with amount', amount);
 
-  // Aqui foi criada uma queue orders
-  // la na page do RabbitMQ no localhost:15672
-  // eu consigo ver em getMessages que chegou o buffer
+  channels.orders.sendToQueue('orders', Buffer.from(JSON.stringify({amount})))
 
-  channels.orders.sendToQueue('orders', Buffer.from('Hello World'))
+  await db.insert(schema.orders).values({
+    id: randomUUID(),
+    customerId: 'cbd3c623-a109-4d4b-ad4c-303746f49bff',
+    amount
+  })
   
   return reply.status(201).send()
 })

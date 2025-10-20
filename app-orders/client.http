@@ -1,0 +1,13 @@
+#Variables
+@baseUrl = http://localhost:3333
+
+###
+
+# @name criarPedido
+POST {{baseUrl}}/orders
+Accept: application/json
+Content-Type: application/json
+
+{
+  "amount": 5000
+}

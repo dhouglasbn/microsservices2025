@@ -1,5 +1,8 @@
+import '@opentelemetry/auto-instrumentations-node/register'
+
 import { fastify } from 'fastify'
 import { fastifyCors } from '@fastify/cors'
+import { trace } from '@opentelemetry/api'
 import { z } from 'zod'
 import {
   serializerCompiler,
@@ -10,7 +13,9 @@ import { channels } from '../broker/channels/index.ts'
 import { db } from '../db/client.ts'
 import { schema } from '../db/schema/index.ts'
 import { randomUUID } from 'node:crypto'
+import { setTimeout } from 'node:timers/promises'
 import { dispatchOrderCreated } from '../broker/messages/order-created.ts'
+import { tracer } from '../tracer/tracer.ts'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -46,18 +51,28 @@ app.post('/orders', {
 
   console.log('Creating an order with amount', amount);
 
+  await db.insert(schema.orders).values({
+    id: orderId,
+    customerId: 'cbd3c623-a109-4d4b-ad4c-303746f49bff',
+    amount
+  })
+
+  // Aqui a gente consegue detalhar um trace personalizado para ver o que faz demorar
+  // const span = tracer.startSpan('eu acho que aqui ta dando ruim')
+  // span.setAttribute('teste', 'Hello World')
+
+  // await setTimeout(2000)
+
+  // span.end()
+
+  // trace.getActiveSpan()?.setAttribute('order_id', orderId)
+
   dispatchOrderCreated({
     orderId,
     amount,
     customer: {
       id: 'cbd3c623-a109-4d4b-ad4c-303746f49bff'
     }
-  })
-
-  await db.insert(schema.orders).values({
-    id: orderId,
-    customerId: 'cbd3c623-a109-4d4b-ad4c-303746f49bff',
-    amount
   })
   
   return reply.status(201).send()

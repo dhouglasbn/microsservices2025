@@ -1,3 +1,4 @@
+import '@opentelemetry/auto-instrumentations-node/register'
 import '../broker/subscriber.ts' // instancia quando inicia o server http
 
 import { fastify } from 'fastify'

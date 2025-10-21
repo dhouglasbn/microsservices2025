@@ -26,3 +26,12 @@ Então depois de
   - create_order
 chamamos
   - order_created
+
+# Como estamos definindo
+
+Estamos usando typescript pela realidade da masterclass
+e o padrão do typescript entre todos os microsserviços.
+
+Existe o padrão json schema que toda linguagem reconhece
+
+Mas como serão definidos os contratos é decisão de projeto.

@@ -17,19 +17,19 @@ services:
       - "4318:4318" # OTLP/HTTP
 
   api-gateway:
-    image: kong:3.9
+    build:
+      context: './docker/kong'
     environment:
       KONG_DATABASE: 'off' # Não usa o db do kong
       KONG_ADMIN_LISTEN: '0.0.0.0:8001'
       KONG_ADMIN_GUI_URL: http://localhost:8002
-      KONG_DECLARATIVE_CONFIG: '/kong/config.yaml' # Nossa Config de volumes
+      ORDERS_SERVICE_URL: http://host.docker.internal:3333
+      INVOICES_SERVICE_URL: http://host.docker.internal:3334
     # O container do kong nativamente não bate no host da minha máquina
     # O extra-hosts é um hack para fzr o api gateway bater nos serviços
     # que estão rodando na minha máquina
     extra_hosts: 
       - "host.docker.internal:host-gateway"
-    volumes:
-      - './docker/kong/config.yaml:/kong/config.yaml'
     ports:
       - "8000:8000" # Proxy (API)
       - "8001:8001" # API (Admin)

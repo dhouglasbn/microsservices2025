@@ -3,9 +3,7 @@ _transform: true
 
 services:
   - name: orders
-    url: http://host.docker.internal:3333 # Nosso localhost pelo config do docker
-    protocol: http
-    host: host.docker.internal
+    url: ${ORDERS_SERVICE_URL} # Nosso localhost pelo config do docker
     port: 3333
     path: / 
     routes:
@@ -17,9 +15,7 @@ services:
           - '/orders' # apigateway.com/orders faz uma requisição na api de orders
 
   - name: invoices
-    url: http://host.docker.internal:3334 # Nosso localhost pelo config do docker
-    protocol: http
-    host: host.docker.internal
+    url: ${INVOICES_SERVICE_URL} # Nosso localhost pelo config do docker
     port: 3334
     path: / 
     routes:

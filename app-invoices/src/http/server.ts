@@ -29,10 +29,7 @@ app.register(fastifyCors, { origin: '*'})
  * dar ok para entender que a versão 2 está no ar e ir passando todos os
  * usuários para a versão 2 até matar a versão 1.
  */
-app.get('/health', () => {
-  console.log('bateu');
-  return 'OK'
-})
+app.get('/health', () => 'OK')
 
 app.listen({ host: '0.0.0.0', port: 3334 }).then(() => {
   console.log('[Invoices] - HTTP Server running!');
